@@ -184,6 +184,8 @@ jobs:
           gradle-version: ${{ inputs.gradle-version }}
           build-root-directory: ${{ env.PBJ_CORE }}
           arguments: snyk-test
+        env:
+          SNYK_TOKEN: ${{ secrets.snyk-token }}
 #      - name: SonarCloud Options
 #        id: sonar-cloud
 #        env:
