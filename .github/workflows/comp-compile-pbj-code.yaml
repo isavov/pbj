@@ -22,6 +22,11 @@ on:
         type: boolean
         required: false
         default: false
+      enable-snyk-scan:
+        description: "Snyk Scan Enabled"
+        type: boolean
+        required: false
+        default: false
       java-distribution:
         description: "Java JDK Distribution:"
         type: string
@@ -50,6 +55,9 @@ on:
       sonar-token:
         description: "The SonarCloud access token used by the SonarQube agent to report an analysis."
         required: false
+      snyk-token:
+        description: "The Snyk access token is used by Snyk to analyze the code for vulnerabilities "
+        required: false
 
 defaults:
   run:
@@ -71,7 +79,7 @@ env:
 jobs:
   compile:
     name: ${{ inputs.custom-job-label || 'Compiles' }}
-    runs-on: [ self-hosted, Linux, pbj, standard, ephemeral ]
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -168,6 +176,14 @@ jobs:
           build-root-directory: ${{ env.PBJ_INTEGRATION_TESTS }}
           arguments: jmh --scan
 
+      - name: Gradle Snyk Test (PBJ Core)
+        id: gradle-snyk-test
+        uses: gradle/gradle-build-action@v2
+        if: ${{ inputs.enable-snyk-tests && !cancelled() && always()}}
+        with:
+          gradle-version: ${{ inputs.gradle-version }}
+          build-root-directory: ${{ env.PBJ_CORE }}
+          arguments: snyk-test
 #      - name: SonarCloud Options
 #        id: sonar-cloud
 #        env:
