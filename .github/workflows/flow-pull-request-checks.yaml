@@ -7,6 +7,14 @@ on:
       - reopened
       - synchronize
 
+permissions:
+  id-token: write
+  pull-requests: write
+  statuses: write
+  checks: write
+  issues: read
+  contents: read
+
 defaults:
   run:
     shell: bash
