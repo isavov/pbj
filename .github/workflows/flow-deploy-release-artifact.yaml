@@ -29,7 +29,10 @@ defaults:
 
 permissions:
   contents: read
-
+  checks: write
+  issues: read
+  pull-requests: write
+  statuses: write
 env:
   LC_ALL: C.UTF-8
 
