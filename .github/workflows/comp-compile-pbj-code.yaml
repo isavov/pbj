@@ -179,7 +179,7 @@ jobs:
       - name: Gradle Snyk Test (PBJ Core)
         id: gradle-snyk-test
         uses: gradle/gradle-build-action@v2
-        if: ${{ inputs.enable-snyk-tests && !cancelled() && always()}}
+        if: ${{ inputs.enable-snyk-scan && !cancelled() && always()}}
         with:
           gradle-version: ${{ inputs.gradle-version }}
           build-root-directory: ${{ env.PBJ_CORE }}

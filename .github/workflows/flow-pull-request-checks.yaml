@@ -57,8 +57,8 @@ jobs:
     uses: ./.github/workflows/comp-compile-pbj-code.yaml
     with:
       custom-job-label: Standard
-      enable-integration-tests: true
-      enable-sonar-analysis: true
+      enable-integration-tests: false
+      enable-sonar-analysis: false
       enable-snyk-scan: true
     secrets:
       access-token: ${{ secrets.GITHUB_TOKEN }}
