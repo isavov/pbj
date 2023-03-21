@@ -27,6 +27,11 @@ on:
         type: boolean
         required: false
         default: false
+      enable-snyk-monitor:
+        description: "Snyk Monitor Enabled"
+        type: boolean
+        required: false
+        default: false
       java-distribution:
         description: "Java JDK Distribution:"
         type: string
@@ -212,6 +217,17 @@ jobs:
           html-to-markdown build/reports/snyk-code.html -o  build/reports/snyk && \
           cat build/reports/snyk/snyk-code.html.md >> $GITHUB_STEP_SUMMARY
         working-directory: ${{ env.PBJ_CORE }}
+
+      - name: Gradle Snyk Monitor(PBJ Core)
+        id: gradle-snyk-monitor
+        uses: gradle/gradle-build-action@v2
+        if: ${{ inputs.enable-snyk-monitor && !cancelled() && always()}}
+        with:
+          gradle-version: ${{ inputs.gradle-version }}
+          build-root-directory: ${{ env.PBJ_CORE }}
+          arguments: snyk-code
+        env:
+          SNYK_TOKEN: ${{ secrets.snyk-token }}
 #      - name: SonarCloud Options
 #        id: sonar-cloud
 #        env:
