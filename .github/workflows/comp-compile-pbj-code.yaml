@@ -186,6 +186,32 @@ jobs:
           arguments: snyk-test
         env:
           SNYK_TOKEN: ${{ secrets.snyk-token }}
+
+      - name: Gradle Snyk Code Test (PBJ Core)
+        id: gradle-snyk-code
+        uses: gradle/gradle-build-action@v2
+        if: ${{ inputs.enable-snyk-scan && !cancelled() && always()}}
+        with:
+          gradle-version: ${{ inputs.gradle-version }}
+          build-root-directory: ${{ env.PBJ_CORE }}
+          arguments: snyk-code
+        env:
+          SNYK_TOKEN: ${{ secrets.snyk-token }}
+
+      - name: Setup Snyk Reports
+        if: ${{ inputs.enable-snyk-scan && !cancelled() && always()}}
+        run: npm install -g snyk-to-html @wcj/html-to-markdown-cli
+
+      - name: Publish Snyk Results
+        if: ${{ inputs.enable-snyk-scan && !cancelled() && always()}}
+        run: |
+          snyk-to-html -i build/reports/snyk-test.json -o build/reports/snyk-test.html && \
+          html-to-markdown build/reports/snyk-test.html -o  build/reports/snyk && \
+          cat build/reports/snyk/snyk-test.html.md >> $GITHUB_STEP_SUMMARY
+          snyk-to-html -i build/reports/snyk-code.sarif -o build/reports/snyk-code.html && \
+          html-to-markdown build/reports/snyk-code.html -o  build/reports/snyk && \
+          cat build/reports/snyk/snyk-code.html.md >> $GITHUB_STEP_SUMMARY
+        working-directory: ${{ env.PBJ_CORE }}
 #      - name: SonarCloud Options
 #        id: sonar-cloud
 #        env:
